@@ -1,0 +1,53 @@
+name: КТ2 — Python и Redis HASH
+
+on:
+  push:
+    paths:
+      - "KT2_Redis/solution.py"
+      - "KT2_Redis/requirements.txt"
+      - ".github/workflows/kt2_redis.yml"
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Установить Python-библиотеки
+        run: python -m pip install -r KT2_Redis/requirements.txt
+      - name: Python — отбор и сохранение Redis HASH
+        run: python KT2_Redis/solution.py
+      - name: redis-cli — проверить число хэшей и пример
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y redis-tools
+          key="$(cat KT2_Redis/sample_key.txt)"
+          echo 'redis-cli --raw DBSIZE'
+          count="$(redis-cli --raw DBSIZE)"
+          echo "$count"
+          test "$count" -eq 1343
+          echo "Ключ: $key"
+          echo 'redis-cli --raw TYPE <название организации>'
+          type="$(redis-cli --raw TYPE "$key")"
+          echo "$type"
+          test "$type" = hash
+          echo 'redis-cli --raw HLEN <название организации>'
+          fields="$(redis-cli --raw HLEN "$key")"
+          echo "$fields"
+          test "$fields" -eq 2
+          echo 'redis-cli --raw HGETALL <название организации>'
+          redis-cli --raw HGETALL "$key"
+          test "$(redis-cli --raw HGET "$key" 'Выдано предписаний')" -gt 10
