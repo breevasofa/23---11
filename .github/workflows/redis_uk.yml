@@ -1,0 +1,45 @@
+name: Проверка Python и Redis
+
+on:
+  push:
+    paths:
+      - "Big_Data_redis/**"
+      - ".devcontainer/**"
+      - ".github/workflows/redis_uk.yml"
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Установить библиотеки Python
+        run: python -m pip install -r Big_Data_redis/requirements.txt
+      - name: Загрузить и проверить хэши через Python
+        run: python Big_Data_redis/load_to_redis.py
+      - name: Проверить данные через redis-cli
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y redis-tools
+          redis-cli --raw ping
+          echo "Количество хэшей:"
+          count=$(redis-cli --scan --pattern 'uk:org:*' | wc -l)
+          echo "$count"
+          test "$count" -eq 1343
+          sample_key=$(redis-cli --scan --pattern 'uk:org:*' | sort | sed -n '1p')
+          test "$(redis-cli TYPE "$sample_key")" = hash
+          echo "redis-cli --raw HGETALL $sample_key"
+          redis-cli --raw HGETALL "$sample_key"
