@@ -70,7 +70,7 @@ def main() -> None:
     print(f"Строк в Excel: {len(frame)}")
     print(f"Организаций с предписаниями > 10: {len(hashes)}")
     print(f"Проверено Redis HASH: {len(hashes)}")
-    print(f"Пример ключа (название организации): {example}")
+    print(f"Пример ключа (название организации):\n{example}")
     print(f"Пример HGETALL: {client.hgetall(example)}")
 
 
