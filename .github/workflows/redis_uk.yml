@@ -43,3 +43,12 @@ jobs:
           test "$(redis-cli TYPE "$sample_key")" = hash
           echo "redis-cli --raw HGETALL $sample_key"
           redis-cli --raw HGETALL "$sample_key"
+      - name: Сделать скриншоты кода и терминала
+        run: |
+          sudo apt-get install -y xvfb xterm x11-apps imagemagick fonts-dejavu-core
+          bash Big_Data_redis/capture_evidence.sh
+      - name: Сохранить скриншоты запуска
+        uses: actions/upload-artifact@v7
+        with:
+          name: python-redis-screenshots
+          path: Big_Data_redis/screenshots/*.png
