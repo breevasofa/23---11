@@ -5,7 +5,6 @@ on:
     paths:
       - "KT2_Redis/solution.py"
       - "KT2_Redis/requirements.txt"
-      - "KT2_Redis/capture_screenshots.sh"
       - ".github/workflows/kt2_redis.yml"
   workflow_dispatch:
 
@@ -61,12 +60,3 @@ jobs:
         with:
           name: kt2-redis-rdb
           path: KT2_Redis/organizations.rdb
-      - name: Сделать скриншоты настоящих команд
-        run: |
-          sudo apt-get install -y xvfb xterm x11-apps imagemagick fonts-dejavu-core
-          bash KT2_Redis/capture_screenshots.sh
-      - name: Сохранить скриншоты как артефакт запуска
-        uses: actions/upload-artifact@v7
-        with:
-          name: kt2-screenshots
-          path: KT2_Redis/screenshots/*.png
