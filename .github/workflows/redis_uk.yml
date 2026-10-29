@@ -3,7 +3,10 @@ name: Проверка Python и Redis
 on:
   push:
     paths:
-      - "Big_Data_redis/**"
+      - "Big_Data_redis/load_to_redis.py"
+      - "Big_Data_redis/requirements.txt"
+      - "Big_Data_redis/start_redis.sh"
+      - "Big_Data_redis/capture_evidence.sh"
       - ".devcontainer/**"
       - ".github/workflows/redis_uk.yml"
   workflow_dispatch:

@@ -18,3 +18,7 @@ redis-cli --raw HGETALL "$(redis-cli --scan --pattern 'uk:org:*' | sort | sed -n
 ```
 
 Ожидаемые количества: 32 007 строк Excel и 1 343 хэша Redis. Redis доступен только через `localhost:6379`; его данные сохраняются в игнорируемой Git папке `Big_Data_redis/.redis-data` внутри Codespace. Workflow GitHub Actions запускает те же проверки при изменении решения и позволяет увидеть вывод Python и `redis-cli` в GitHub.
+
+## Отчёт и скриншоты
+
+[Word-отчёт](./Отчёт%20Python%20Redis.docx) содержит скриншоты кода, выполнения Python и проверки через `redis-cli`. Отдельные изображения лежат в [папке screenshots](./screenshots/). Они получены в [успешном запуске GitHub Actions](https://github.com/breevasofa/23---11/actions/runs/40885834186). Redis-сервис в GitHub Actions существует только во время проверки; для работы в Codespaces используйте команды выше.
