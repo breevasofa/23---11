@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - "Big_Data_redis/load_to_redis.py"
+      - "Big_Data_redis/redis_uk.ipynb"
+      - "Big_Data_redis/execute_notebook.py"
       - "Big_Data_redis/requirements.txt"
       - "Big_Data_redis/start_redis.sh"
       - "Big_Data_redis/capture_evidence.sh"
@@ -33,6 +35,15 @@ jobs:
         run: python -m pip install -r Big_Data_redis/requirements.txt
       - name: Загрузить и проверить хэши через Python
         run: python Big_Data_redis/load_to_redis.py
+      - name: Выполнить notebook с Redis-хэшами
+        run: |
+          python -m pip install nbformat nbclient
+          python Big_Data_redis/execute_notebook.py
+      - name: Сохранить выполненный notebook
+        uses: actions/upload-artifact@v7
+        with:
+          name: executed-redis-notebook
+          path: Big_Data_redis/redis_uk_executed.ipynb
       - name: Проверить данные через redis-cli
         run: |
           sudo apt-get update
