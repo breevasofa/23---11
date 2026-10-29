@@ -51,3 +51,12 @@ jobs:
           echo 'redis-cli --raw HGETALL <название организации>'
           redis-cli --raw HGETALL "$key"
           test "$(redis-cli --raw HGET "$key" 'Выдано предписаний')" -gt 10
+      - name: Сохранить базу Redis в RDB
+        run: |
+          redis-cli --rdb KT2_Redis/organizations.rdb
+          test -s KT2_Redis/organizations.rdb
+      - name: Сохранить RDB как артефакт запуска
+        uses: actions/upload-artifact@v7
+        with:
+          name: kt2-redis-rdb
+          path: KT2_Redis/organizations.rdb
