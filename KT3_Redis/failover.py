@@ -98,15 +98,22 @@ def main() -> None:
             created = subprocess.run(command, text=True, capture_output=True, timeout=90)
             if created.returncode:
                 raise RuntimeError(created.stdout + "\n" + created.stderr)
-            wait_for(lambda: cluster_ok(OTHER_MASTER_PORT), "готовность кластера")
-            before = nodes(OTHER_MASTER_PORT)
-            original = node_at(before, MASTER_PORT)
-            assert original and "master" in original[1]["flags"]
-            original_id = original[0]
-            replicas = {node_id for node_id, item in before.items() if item["master_id"] == original_id}
-            assert len(before) == 9 and len(replicas) == 2
-            assert sum("master" in x["flags"] for x in before.values()) == 3
-            assert sum("slave" in x["flags"] for x in before.values()) == 6
+            def ready_topology():
+                if not cluster_ok(OTHER_MASTER_PORT):
+                    return None
+                view = nodes(OTHER_MASTER_PORT)
+                original = node_at(view, MASTER_PORT)
+                if not original or "master" not in original[1]["flags"]:
+                    return None
+                original_id = original[0]
+                replicas = {node_id for node_id, item in view.items() if item["master_id"] == original_id}
+                if (len(view) != 9 or len(replicas) != 2
+                        or sum("master" in x["flags"] for x in view.values()) != 3
+                        or sum("slave" in x["flags"] for x in view.values()) != 6):
+                    return None
+                return view, original_id, replicas
+
+            before, original_id, replicas = wait_for(ready_topology, "согласование схемы 3 мастера и 6 реплик", 30)
             print("=== ДО СБОЯ: 9 узлов, 3 мастера, 6 реплик; у 5500 две реплики ===", flush=True)
             print("\n".join(x["line"] for x in sorted(before.values(), key=lambda x: x["port"])), flush=True)
 
