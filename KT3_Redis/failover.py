@@ -63,6 +63,11 @@ def cluster_ok(port: int) -> bool:
     return "cluster_state:ok" in cli(port, "CLUSTER", "INFO")
 
 
+def evidence(title: str, message: str) -> None:
+    """Show verified results in the terminal and public GitHub Actions annotations."""
+    print(f"::notice title={title}::{message}", flush=True)
+
+
 def main() -> None:
     processes: dict[int, subprocess.Popen] = {}
     stopped = False
@@ -116,6 +121,7 @@ def main() -> None:
             before, original_id, replicas = wait_for(ready_topology, "согласование схемы 3 мастера и 6 реплик", 30)
             print("=== ДО СБОЯ: 9 узлов, 3 мастера, 6 реплик; у 5500 две реплики ===", flush=True)
             print("\n".join(x["line"] for x in sorted(before.values(), key=lambda x: x["port"])), flush=True)
+            evidence("Кластер создан", "9 узлов; 3 мастера и 6 реплик; все 16384 слота покрыты")
 
             # Одна TCP-сессия обеспечивает WAIT именно для сделанной записи.
             with __import__("socket").create_connection(("127.0.0.1", MASTER_PORT), timeout=10) as sock:
@@ -130,6 +136,7 @@ def main() -> None:
                     reply += sock.recv(4096).decode(errors="replace")
                 assert ":2" in reply, f"Запись не подтвердилась обеими репликами: {reply!r}"
             print("SET f 888; WAIT 2 5000 -> обе реплики подтвердили запись", flush=True)
+            evidence("Запись проверена", "SET f 888; WAIT 2 5000 подтвердил две реплики")
 
             os.kill(processes[MASTER_PORT].pid, signal.SIGSTOP)
             stopped = True
@@ -151,6 +158,7 @@ def main() -> None:
             print(f"=== ПОСЛЕ СБОЯ: реплика :{new_master['port']} стала мастером слотов 0-5460 ===", flush=True)
             print("\n".join(x["line"] for x in sorted(after.values(), key=lambda x: x["port"])), flush=True)
             print(f"cluster_state:ok; GET {KEY} -> {result}", flush=True)
+            evidence("Автоматическое переключение", f"SIGSTOP :5500; новый мастер :{new_master['port']}; cluster_state:ok; GET f = {result}")
 
             os.kill(processes[MASTER_PORT].pid, signal.SIGCONT)
             stopped = False
@@ -160,6 +168,7 @@ def main() -> None:
             wait_for(rejoined, "возврат прежнего мастера как реплики", 45)
             print(f"=== ВОССТАНОВЛЕНИЕ: :{MASTER_PORT} вернулся как реплика :{new_master['port']} ===", flush=True)
             print(f"cluster_state:ok; GET {KEY} -> {cli(new_master['port'], 'GET', KEY)}", flush=True)
+            evidence("Восстановление", f":5500 вернулся репликой :{new_master['port']}; cluster_state:ok; GET f = {VALUE}")
         finally:
             if stopped:
                 os.kill(processes[MASTER_PORT].pid, signal.SIGCONT)
