@@ -25,3 +25,9 @@ jobs:
           sudo apt-get install -y redis-server redis-tools xvfb xterm scrot imagemagick fonts-dejavu-core
       - name: Python — воспроизвести сбой и снять терминал
         run: bash KT3_Redis/capture_terminal.sh
+      - name: Кадр терминала до сбоя
+        run: bash KT3_Redis/publish_capture.sh KT3_Redis/screenshots/05_кластер_терминал.png
+      - name: Кадр терминала после сбоя
+        run: bash KT3_Redis/publish_capture.sh KT3_Redis/screenshots/07_сбой_терминал.png
+      - name: Кадр терминала после восстановления
+        run: bash KT3_Redis/publish_capture.sh KT3_Redis/screenshots/08_восстановление_терминал.png

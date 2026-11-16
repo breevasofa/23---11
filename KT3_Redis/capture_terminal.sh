@@ -22,16 +22,3 @@ timeout 90 bash -c 'until test -f /tmp/kt3_exit; do sleep 0.2; done'
 test "$(cat /tmp/kt3_exit)" = 0
 test "$(find KT3_Redis/screenshots -name '0[5-8]_*.png' | wc -l)" = 4
 
-# Read-only CI token: publish captured image bytes as check-run notices.
-# The agent reconstructs the images locally and commits the reviewed report.
-for image in KT3_Redis/screenshots/05_*.png KT3_Redis/screenshots/07_*.png KT3_Redis/screenshots/08_*.png; do
-  stem="$(basename "$image" .png)"
-  convert "$image" -quality 52 "/tmp/$stem.jpg"
-  encoded="$(base64 -w 0 "/tmp/$stem.jpg")"
-  length=${#encoded}
-  total=$(((length + 11999) / 12000))
-  for ((index = 0; index < total; index++)); do
-    chunk="${encoded:index*12000:12000}"
-    printf '::notice title=CAPTURE_%s_%03d_%03d::%s\n' "$stem" "$((index + 1))" "$total" "$chunk"
-  done
-done
