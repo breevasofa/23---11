@@ -7,6 +7,7 @@ import signal
 import subprocess
 import tempfile
 import time
+import traceback
 from pathlib import Path
 
 
@@ -169,5 +170,6 @@ if __name__ == "__main__":
         main()
     except Exception as exc:
         # Публичная аннотация CI сообщает причину сбоя без доступа к закрытому логу.
-        print(f"::error title=KT3 Redis failover::{type(exc).__name__}: {exc}", flush=True)
+        frame = traceback.extract_tb(exc.__traceback__)[-1]
+        print(f"::error title=KT3 Redis failover::{type(exc).__name__} at line {frame.lineno}: {exc}", flush=True)
         raise
