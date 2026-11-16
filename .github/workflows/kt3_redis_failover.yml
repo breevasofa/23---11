@@ -1,5 +1,8 @@
 name: КТ3_1 — отказ и восстановление Redis Cluster
 
+permissions:
+  contents: read
+
 on:
   push:
     paths:
@@ -19,6 +22,6 @@ jobs:
       - name: Установить Redis
         run: |
           sudo apt-get update
-          sudo apt-get install -y redis-server redis-tools
-      - name: Python — воспроизвести сбой и восстановление
-        run: python KT3_Redis/failover.py
+          sudo apt-get install -y redis-server redis-tools xvfb xterm scrot imagemagick fonts-dejavu-core
+      - name: Python — воспроизвести сбой и снять терминал
+        run: bash KT3_Redis/capture_terminal.sh
