@@ -165,4 +165,9 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as exc:
+        # Публичная аннотация CI сообщает причину сбоя без доступа к закрытому логу.
+        print(f"::error title=KT3 Redis failover::{type(exc).__name__}: {exc}", flush=True)
+        raise
