@@ -1,0 +1,24 @@
+name: КТ3_1 — отказ и восстановление Redis Cluster
+
+on:
+  push:
+    paths:
+      - "KT3_Redis/**"
+      - ".github/workflows/kt3_redis_failover.yml"
+  workflow_dispatch:
+
+jobs:
+  failover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Установить Redis
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y redis-server redis-tools
+      - name: Python — воспроизвести сбой и восстановление
+        run: python KT3_Redis/failover.py
