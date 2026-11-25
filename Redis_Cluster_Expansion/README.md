@@ -16,7 +16,7 @@
 
 ## Результат
 
-[Успешный запуск GitHub Actions](https://github.com/breevasofa/23---11/actions/runs/45678136136) · [Word-отчёт](Отчёт_масштабирование_Redis_Cluster.docx)
+[Успешный запуск GitHub Actions](https://github.com/breevasofa/23---11/actions/runs/45678136136)
 
 ![Исходный кластер: 4 мастера и 8 реплик](screenshots/00_initial.png)
 

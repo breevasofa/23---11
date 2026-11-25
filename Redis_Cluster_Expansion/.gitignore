@@ -6,3 +6,4 @@ failed_artifact/
 successful_artifact.zip
 report_preview.pdf
 report_preview_*.png
+*.docx
