@@ -9,14 +9,14 @@ sleep 1
 xterm -T 'GitHub Actions workspace - Titanic W/P - code 1' \
   -geometry 155x47+12+12 -fa 'DejaVu Sans Mono' -fs 11 \
   -bg '#1e1e1e' -fg '#e8e8e8' -hold \
-  -e bash -lc 'printf "$ nl -ba titanic_w_p/analysis.py | sed -n '\''1,74p'\''\n\n"; nl -ba titanic_w_p/analysis.py | sed -n "1,74p"' &
+  -e bash -lc 'printf "$ nl -ba titanic_w_p/analysis.py | sed -n '\''10,50p'\''\n\n"; nl -ba titanic_w_p/analysis.py | sed -n "10,50p"' &
 sleep 2
 scrot titanic_w_p/screenshots/01_code_sets.png
 
 xterm -T 'GitHub Actions workspace - Titanic W/P - code 2' \
   -geometry 155x47+12+12 -fa 'DejaVu Sans Mono' -fs 11 \
   -bg '#1e1e1e' -fg '#e8e8e8' -hold \
-  -e bash -lc 'printf "$ nl -ba titanic_w_p/analysis.py | sed -n '\''75,140p'\''\n\n"; nl -ba titanic_w_p/analysis.py | sed -n "75,140p"' &
+  -e bash -lc 'printf "$ nl -ba titanic_w_p/analysis.py | sed -n '\''80,106p;114,125p'\''\n\n"; nl -ba titanic_w_p/analysis.py | sed -n "80,106p;114,125p"' &
 sleep 2
 scrot titanic_w_p/screenshots/02_code_scoring.png
 
