@@ -1,0 +1,34 @@
+name: Redis Cluster — узлы и решардирование
+
+permissions:
+  contents: read
+
+on:
+  push:
+    paths:
+      - "Redis_Cluster_Expansion/**"
+      - ".github/workflows/redis_cluster_expansion.yml"
+  workflow_dispatch:
+
+jobs:
+  expansion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Установить Redis и средства захвата экрана
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y redis-server redis-tools xvfb xterm scrot fonts-dejavu-core
+      - name: Выполнить сценарий и сделать скриншоты всех этапов
+        run: bash Redis_Cluster_Expansion/capture_terminal.sh
+      - name: Сохранить скриншоты запуска
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: redis-cluster-expansion-screenshots
+          path: Redis_Cluster_Expansion/screenshots/*.png
+          if-no-files-found: warn
