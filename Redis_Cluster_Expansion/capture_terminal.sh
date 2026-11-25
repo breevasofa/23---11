@@ -30,6 +30,7 @@ xterm -T 'Redis Cluster expansion - GitHub Actions terminal' \
 
 for stage in 00_initial 01_two_replicas 02_removed 03_new_master 04_resharded; do
   timeout 120 bash -c 'until test -f "$1/$2.ready"; do test ! -f /tmp/redis_expansion_exit || exit 88; sleep 0.2; done' _ "$KT4_CAPTURE_DIR" "$stage"
+  rm -f "Redis_Cluster_Expansion/screenshots/${stage}.png"
   scrot "Redis_Cluster_Expansion/screenshots/${stage}.png"
   touch "$KT4_CAPTURE_DIR/$stage.continue"
 done
