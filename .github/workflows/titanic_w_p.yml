@@ -1,0 +1,37 @@
+name: Titanic W and P analysis
+
+on:
+  push:
+    paths:
+      - "titanic_w_p/analysis.py"
+      - "titanic_w_p/analysis.ipynb"
+      - "titanic_w_p/titanic.csv"
+      - "titanic_w_p/requirements.txt"
+      - "titanic_w_p/capture_code.sh"
+      - ".github/workflows/titanic_w_p.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies and screenshot tools
+        run: |
+          python -m pip install -r titanic_w_p/requirements.txt
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb xterm scrot fonts-dejavu-core
+      - name: Run analysis and capture code
+        run: bash titanic_w_p/capture_code.sh
+      - name: Save screenshots as a run artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: titanic-code-and-results
+          path: titanic_w_p/screenshots/*.png
