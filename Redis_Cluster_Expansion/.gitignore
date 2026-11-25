@@ -1,1 +1,5 @@
 __pycache__/
+run_logs.zip
+run_logs/
+failed_artifact.zip
+failed_artifact/
