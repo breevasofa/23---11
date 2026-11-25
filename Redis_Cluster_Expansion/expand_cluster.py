@@ -119,6 +119,26 @@ def verify(expected_nodes: int, expected_masters: int, data: dict[str, str]) -> 
     return view
 
 
+def wait_for_cluster_convergence(view: dict[str, dict], timeout: int = 90) -> None:
+    """Wait until each node, including the new empty master, sees the full cluster."""
+    ports = sorted(node["port"] for node in view.values())
+    deadline = time.monotonic() + timeout
+    last_status = {}
+    while time.monotonic() < deadline:
+        last_status = {}
+        for port in ports:
+            try:
+                info = dict(line.split(":", 1) for line in cli(port, "CLUSTER", "INFO").splitlines() if ":" in line)
+                known_nodes = len(cli(port, "CLUSTER", "NODES").splitlines())
+                last_status[port] = (info.get("cluster_state"), info.get("cluster_slots_assigned"), known_nodes)
+            except (RuntimeError, OSError, subprocess.TimeoutExpired):
+                last_status[port] = ("unreachable", None, None)
+        if all(status == ("ok", "16384", len(ports)) for status in last_status.values()):
+            return
+        time.sleep(0.5)
+    raise TimeoutError(f"Cluster did not converge on every node: {last_status}")
+
+
 def show_stage(stage: str, title: str, view: dict[str, dict], data: dict[str, str], extra: str = "") -> None:
     print("\033[2J\033[H", end="", flush=True)
     print(f"=== {stage}: {title} ===", flush=True)
@@ -220,6 +240,8 @@ def main() -> None:
             assert new_id != removed_id, "Re-added node must have a fresh ID"
             show_stage("03_new_master", "Re-added :4013 as empty master", remastered, data,
                        "5 masters; new master has 0 slots before resharding")
+
+            wait_for_cluster_convergence(remastered)
 
             cluster("reshard", f"127.0.0.1:{SEED_PORT}", "--cluster-from", source_id,
                     "--cluster-to", new_id, "--cluster-slots", str(MOVED_SLOTS),
