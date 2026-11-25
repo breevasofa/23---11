@@ -88,4 +88,8 @@ python -m pip install -r titanic_w_p/requirements.txt
 python titanic_w_p/analysis.py
 ```
 
-Откройте `titanic_w_p/analysis.ipynb` и выполните ячейки сверху вниз. Полные воспроизводимые числовые результаты записываются в `results.json`. Скриншоты кода и Word-отчёт находятся в этой же папке.
+Откройте `titanic_w_p/analysis.ipynb` и выполните ячейки сверху вниз. Полные воспроизводимые числовые результаты записываются в `results.json`.
+
+## Подтверждение и отчёт
+
+Анализ успешно выполнен в [GitHub Actions, запуск № 45669353891](https://github.com/breevasofa/23---11/actions/runs/45669353891). Во время этого запуска получены [скриншот множеств W и P](screenshots/01_code_sets.png), [скриншот расчёта](screenshots/02_code_scoring.png) и [скриншот результатов](screenshots/03_results.png). Снимки и выводы включены в [Word-отчёт](Отчёт_Титаник_W_P.docx). Запуск именно в GitHub Codespaces не подтверждён: снимки подписаны как сделанные в рабочем окружении GitHub Actions.
