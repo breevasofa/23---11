@@ -3,3 +3,6 @@ run_logs.zip
 run_logs/
 failed_artifact.zip
 failed_artifact/
+successful_artifact.zip
+report_preview.pdf
+report_preview_*.png
